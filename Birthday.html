@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 70th Birthday Papa!</title>
+    <!-- Fonts: Playfair Display for Elegance, Indie Flower for Handwritten feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #fdfaf5;
+            --accent-gold: #d4af37;
+            --text-dark: #333;
+            --deep-red: #8b0000;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Floating Decoration */
+        .floating-heart {
+            position: fixed;
+            color: rgba(212, 175, 55, 0.3);
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 1;
+            animation: float Up 6s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Hero Section */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(253, 250, 245, 0.8), rgba(253, 250, 245, 0.8)), 
+                        url('https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80') center/cover;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            margin: 0;
+            color: var(--deep-red);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* The Message Sections */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .memory-block {
+            margin-bottom: 100px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
+
+        .memory-block.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        /* Polaroid Style */
+        .polaroid {
+            background: white;
+            padding: 15px 15px 60px 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            max-width: 350px;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .polaroid-caption {
+            font-family: 'Indie Flower', cursive;
+            text-align: center;
+            font-size: 1.5rem;
+            margin-top: 15px;
+            color: #555;
+        }
+
+        .right-align .polaroid { transform: rotate(3deg); }
+
+        /* Highlight Boxes */
+        .quote-box {
+            font-style: italic;
+            border-left: 4px solid var(--accent-gold);
+            padding-left: 20px;
+            margin: 40px 0;
+            color: #666;
+        }
+
+        footer {
+            text-align: center;
+            padding: 100px 20px;
+            background: #fff;
+        }
+
+        .signature {
+            font-family: 'Indie Flower', cursive;
+            font-size: 2rem;
+            color: var(--deep-red);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body onload="launchConfetti()">
+
+    <header>
+        <div class="subtitle">CELEBRATING</div>
+        <h1>Papa's 70th Birthday</h1>
+        <p style="font-family: 'Indie Flower'; font-size: 1.5rem; margin-top: 20px;">A journey of 70 beautiful years...</p>
+        <div style="margin-top: 50px; font-size: 2rem; animation: bounce 2s infinite;">↓</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Opening Message -->
+        <div class="memory-block">
+            <p class="message-text">
+                Dear Papa,<br><br>
+                Happy 70th birthday. 🎂🎁❤️<br><br>
+                It actually feels strange writing that number — 70. In my mind you’re still the same Papa I grew up with… just with your super vision that you have now after the cataract surgery, which you are extremely proud of. 😆
+            </p>
+            <div class="polaroid">
+                <img src="https://images.unsplash.com/photo-1516733968668-dbdce39c46ef?q=80&w=500" alt="Cataract Surgery Vision">
+                <div class="polaroid-caption">Papa's "Super Vision"</div>
+            </div>
+        </div>
+
+        <!-- Quiet Strength -->
+        <div class="memory-block right-align">
+            <div class="quote-box">
+                "Someone steady. Someone dependable. Someone who quietly worked hard so the family could move forward."
+            </div>
+            <p class="message-text">
+                When I think about growing up, one thing that always stands out about you is how quietly you did everything for the family. You were never the loud type. If anything, most of the time the complaints probably went to Mama first... but somehow, things were always taken care of.
+            </p>
+        </div>
+
+        <!-- The Onion Passion -->
+        <div class="memory-block">
+            <p class="message-text">
+                And then of course… the onions! 🧅🧅😱🫢<br>
+                To you, onions are basically one of the greatest foods ever created — antioxidants, nutrients, health benefits, tasty, miracles… I don’t think I’ve met anyone else who defended onions as passionately as you. But yea... still not into it. 🤪
+            </p>
+            <div class="polaroid">
+                <img src="https://drive.google.com/file/d/19YSYdneF2Mln1P2swJ_Z-Ytjz4g_f7I_/view?usp=drive_link" alt="Onions">
+                <div class="polaroid-caption">The Legendary Onions 🧅</div>
+            </div>
+        </div>
+
+        <!-- Durian Tug-of-War -->
+        <div class="memory-block right-align">
+            <p class="message-text">
+                Some of my favourite memories are the really random ones. Like your famous <strong>tug-of war with Lubby</strong> when he tried to steal the durian. I still remember watching the two of you pulling on opposite sides of the durian. It was chaotic, ridiculous, and absolutely unforgettable. 🤭
+            </p>
+            <div class="polaroid">
+                <!-- Suggestion: Replace with a photo of the dog or a durian -->
+                <img src="https://images.unsplash.com/photo-1621255554303-3173a7c64c78?q=80&w=500" alt="Durian">
+                <div class="polaroid-caption">The Durian Championship</div>
+            </div>
+        </div>
+
+        <!-- Music and Church -->
+        <div class="memory-block">
+            <p class="message-text">
+                Another thing I admire about you is your passion for music 🎼🎹 When you were serving as a keyboardist in church every weekend, you were super committed. I could always see how much joy it brought you.
+            </p>
+            <div class="polaroid">
+                <img src="https://images.unsplash.com/photo-1552422535-c45813c61732?q=80&w=500" alt="Keyboard">
+                <div class="polaroid-caption">Keyboardist at Church 🎹</div>
+            </div>
+        </div>
+
+        <!-- The Signature Dish -->
+        <div class="memory-block right-align">
+            <p class="message-text">
+                Then there’s your “signature dish” — <strong>Spam with onions and dark sauce.</strong> somehow this combination has become a family classic. 😋
+            </p>
+            <p class="message-text">
+                And the swings you built for us at the 245 house. Those small things probably seemed simple to you, but to us it meant a lot. We spent lot of happy hours on those swings.
+            </p>
+        </div>
+
+        <!-- Legend of the Warehouse -->
+        <div class="memory-block">
+            <p class="message-text">
+                Your focus can be… quite legendary. Like chasing a cat in the warehouse and breaking your finger, or the period of time researching fake dead bird props to scare birds away. When you decide something needs to be done, you really go all in.
+            </p>
+            <div class="polaroid">
+                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=500" alt="Warehouse Cat">
+                <div class="polaroid-caption">Warehouse Adventures 🐈‍⬛</div>
+            </div>
+        </div>
+
+        <!-- Closing -->
+        <div class="memory-block" style="text-align: center;">
+            <p class="message-text">
+                Sometimes fathers don’t say a lot. But their love shows up in the things they do. Looking back now, I realise that your love has been there all along — in all the quiet ways you took care of us.<br><br>
+                Happy 70th birthday, Papa. ❤️ I’m really grateful that you’re my father.
+            </p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>With much love,</p>
+        <div class="signature">Xiao Yen</div>
+        <p style="margin-top: 50px; font-size: 0.8rem; opacity: 0.5;">Happy 70th Birthday | 2024</p>
+    </footer>
+
+    <script>
+        // Confetti Effect
+        function launchConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#d4af37', '#8b0000', '#fdfaf5']
+            });
+        }
+
+        // Scroll Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.memory-block').forEach(block => observer.observe(block));
+
+        // Create floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = Math.random() > 0.5 ? '❤️' : '🎹';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createHeart, 1000);
+    </script>
+</body>
+</html>
