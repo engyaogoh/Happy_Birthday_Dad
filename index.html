@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy 70th Birthday, Papa!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       GLOBAL RESET & VARIABLES
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:    #F5A623;
+      --coral:   #FF6B6B;
+      --teal:    #2EC4B6;
+      --violet:  #9B5DE5;
+      --pink:    #F15BB5;
+      --navy:    #1A1A2E;
+      --cream:   #FFFDF5;
+      --white:   #FFFFFF;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'Nunito', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--navy);
+      color: #2d2d2d;
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       CONFETTI CANVAS (background layer)
+    ============================================================ */
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ============================================================
+       PAGE WRAPPER
+    ============================================================ */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ============================================================
+       HERO BANNER
+    ============================================================ */
+    .hero {
+      text-align: center;
+      padding: 70px 20px 50px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 20px;
+      border-radius: 30px;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(42px, 9vw, 86px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero-sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(18px, 3vw, 26px);
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 36px;
+    }
+
+    /* ============================================================
+       HERO PHOTO SLOT
+       → Replace "hero-photo.jpg" with your image filename
+    ============================================================ */
+    .hero-photo-slot {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 6px solid var(--gold);
+      margin: 0 auto 20px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Placeholder shown when no image is set */
+    .photo-placeholder {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 10px;
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       DIVIDER
+    ============================================================ */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 48px 0 36px;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.15); }
+    .divider-icon { font-size: 22px; }
+
+    /* ============================================================
+       SECTION HEADING (used between groups of cards)
+    ============================================================ */
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* ============================================================
+       MESSAGE CARD
+    ============================================================ */
+    .card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 36px 40px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+    /* Colour accent strip on the left */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 6px; height: 100%;
+    }
+    .card.accent-gold::before   { background: var(--gold); }
+    .card.accent-coral::before  { background: var(--coral); }
+    .card.accent-teal::before   { background: var(--teal); }
+    .card.accent-violet::before { background: var(--violet); }
+    .card.accent-pink::before   { background: var(--pink); }
+
+    /* Decorative large numeral in corner */
+    .card-number {
+      position: absolute;
+      top: -10px; right: 18px;
+      font-family: var(--font-display);
+      font-size: 100px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.04);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .card-avatar {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    .bg-gold   { background: var(--gold); }
+    .bg-coral  { background: var(--coral); }
+    .bg-teal   { background: var(--teal); }
+    .bg-violet { background: var(--violet); }
+    .bg-pink   { background: var(--pink); }
+
+    .card-name {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.2;
+    }
+    .card-relation {
+      font-size: 13px;
+      color: #888;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .card-body {
+      font-size: 16px;
+      line-height: 1.85;
+      color: #3a3a3a;
+      white-space: pre-line;
+    }
+    .card-body p { margin-bottom: 14px; }
+    .card-body p:last-child { margin-bottom: 0; }
+
+    /* ============================================================
+       INLINE PHOTO SLOT (inside a card)
+       → Replace the src with your image filename
+       → You can add as many of these inside any card as you like
+    ============================================================ */
+    .card-photo {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 22px auto;
+      display: block;
+      border: 3px solid rgba(0,0,0,0.06);
+    }
+    .card-photo img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Caption below a photo (optional) */
+    .photo-caption {
+      font-size: 13px;
+      color: #999;
+      text-align: center;
+      margin-top: -12px;
+      margin-bottom: 18px;
+      font-style: italic;
+    }
+
+    /* ============================================================
+       VIDEO SLOT
+       → Paste your YouTube embed URL into the src attribute
+       → Duplicate the whole .video-slot block to add more videos
+    ============================================================ */
+    .video-slot {
+      width: 100%;
+      max-width: 667px;
+      margin: 28px auto;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+    .video-slot iframe {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      height: auto;
+      border: 0;
+    }
+    .video-caption {
+      text-align: center;
+      font-size: 13px;
+      color: #999;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* ============================================================
+       PHOTO GALLERY (optional row of photos, e.g. family grid)
+       → Add/remove <li> items as needed
+    ============================================================ */
+    .photo-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+    .photo-gallery li {
+      list-style: none;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+    }
+    .photo-gallery li img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .footer {
+      text-align: center;
+      padding: 60px 20px 40px;
+    }
+    .footer-number {
+      font-family: var(--font-display);
+      font-size: clamp(80px, 20vw, 180px);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(255,255,255,0.15);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .footer-text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(18px, 3vw, 26px);
+      color: rgba(255,255,255,0.6);
+    }
+    .footer-hearts {
+      font-size: 28px;
+      margin-top: 20px;
+      letter-spacing: 8px;
+    }
+
+    /* ============================================================
+       ANIMATION
+    ============================================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card:nth-child(1)  { animation-delay: 0.05s; }
+    .card:nth-child(2)  { animation-delay: 0.10s; }
+    .card:nth-child(3)  { animation-delay: 0.15s; }
+    .card:nth-child(4)  { animation-delay: 0.20s; }
+    .card:nth-child(5)  { animation-delay: 0.25s; }
+    .card:nth-child(6)  { animation-delay: 0.30s; }
+    .card:nth-child(7)  { animation-delay: 0.35s; }
+    .card:nth-child(8)  { animation-delay: 0.40s; }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 600px) {
+      .card { padding: 26px 24px; }
+      .card-number { font-size: 70px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     CONFETTI CANVAS
+============================================================ -->
+<canvas id="confetti-canvas"></canvas>
+
+<div class="page-wrapper">
+
+  <!-- ============================================================
+       HERO SECTION
+  ============================================================ -->
+  <div class="hero">
+    <div class="hero-badge">🎂 A Special Celebration</div>
+
+    <!-- ── HERO PHOTO SLOT ──────────────────────────────────────
+         Replace "hero-photo.jpg" with your photo filename.
+         The photo must be in the same folder as index.html.
+         To hide the placeholder text, add an <img> tag inside.
+    ─────────────────────────────────────────────────────────── -->
+    <div class="hero-photo-slot">
+      <!-- UNCOMMENT AND EDIT the line below to show your photo:  -->
+      <img src="hero-photo.jpg" alt="Papa" >              
+    </div>
+
+   
+
+    <h1>Happy <span>70th</span><br/>Birthday, Papa!</h1>
+    <p class="hero-sub">With love, laughter & so many memories</p>
+  </div>
+
+
+
+  <!-- ============================================================
+       DIVIDER
+  ============================================================ -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-icon">🎉</div>
+    <div class="divider-line"></div>
+  </div>
+  <p class="section-heading">Messages from the heart</p>
+
+
+  <!-- ===========================================================
+       CARD 1 — WIFE: WEE LING
+  ============================================================ -->
+  <div class="card accent-gold">
+    <div class="card-number">1</div>
+    <div class="card-header">
+      <div class="card-avatar bg-gold">W</div>
+      <div>
+        <div class="card-name">Wee Ling</div>
+        <div class="card-relation">Your Wife 💍</div>
+      </div>
+    </div>
+
+    <!-- ── OPTIONAL PHOTO inside this card ─────────────────────
+         Uncomment and edit the block below to show a photo.
+         Photo must be in the same folder as index.html.
+    ─────────────────────────────────────────────────────────── -->
+    <!--
+    <div class="card-photo">
+      <img src="wee-ling-photo.jpg" alt="Wee Ling" />
+    </div>
+    <p class="photo-caption">A special moment ❤️</p>
+    -->
+
+    <div class="card-body">
+<p>At 70, you are blessed, finally getting the rest you need. Finally able to travel outside Kulai and now outside Malaysia. However wherever you are, you still prefer the place called home where you are happiest.</p>
+<div style="display: flex; justify-content: center;">
+<img src="Mum1.jpg"  style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>Home is where you get your favourite food.
+Home is where your favourite toilet seat is equipped with phone stand.
+Home is where you have all the time to scroll YouTube and Lazada.
+Home where online shopping without me peeking on what you are buying.</p>
+<p>Thank you for the years of laughter. 
+    You still can make me laugh till this day. 
+    Thank you for years together.</p>
+<div style="display: flex; justify-content: center;">
+<img src="WL-photo.jpeg" alt="Home sweet home" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p><em>Love,<br/>Wee Ling</em></p>
+    </div>
+  </div>
+
+
+  <!-- ===========================================================
+       CARD 2 — ELDER DAUGHTER: XIAO YEN
+  ============================================================ -->
+  <div class="card accent-coral">
+    <div class="card-number">2</div>
+    <div class="card-header">
+      <div class="card-avatar bg-coral">X</div>
+      <div>
+        <div class="card-name">Xiao Yen</div>
+        <div class="card-relation">Elder Daughter 👧</div>
+      </div>
+    </div>
+
+    <!--
+    <div class="card-photo">
+      <img src="xiao-yen-photo.jpg" alt="Xiao Yen" />
+    </div>
+    <p class="photo-caption">Caption here</p>
+    -->
+
+    <div class="card-body">
+<p>Dear Papa,</p>
+<p>Happy 70th birthday. 🎂🎁❤️</p>
+<p>It actually feels strange writing that number — 70. In my mind you're still the same Papa I grew up with… just with your super vision that you have now after the cataract surgery, which you are extremely proud of. 😆</p>
+<p>When I think about growing up, one thing that always stands out about you is how quietly you did everything for the family. You were never the loud type. If anything, most of the time the complaints probably went to Mama first, and then Mama would deliver the message to us. 😏 </p>
+<div style="display: flex; justify-content: center;">
+<img src="Jie-photo.jpg" alt="Leg split" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>But somehow, things were always taken care of. We always had what we needed. When we were younger we didn’t realise how much work and responsibility was behind that. Now that I’m older, I understand it more.</p>
+<p>One thing I've always loved about you is your sense of humour. Even in serious conversations you somehow manage to throw in a comment that makes everyone laugh. It's one of those things that made home feel lighter.</p>
+<p>And then of course… the onions! 🧅🧅😱
+Every time I pick onions out from my food, you give me that look. The same look and same nagging, every time. I totally get it! Because to you, onions are basically one of the greatest foods ever created — antioxidants, nutrients, health benefits, tasty, miracles… I don’t think I’ve met anyone else defended onions as passionately as you. But yea...still not into it. 🤪</p>
+<p>Some of my favourite memories with you are the really random ones.</p>
+<p>Like your famous tug-of war with Lubby when he tried to steal the durian. Though you don’t like durian, but when Lubby grabbed the durian you immediately went over and went into a ended up in a championship match with him. I still remember watching the two of you pulling on opposite sides of the durian. It was chaotic, ridiculous, and absolutely unforgettable. 🤭</p> 
+<p>Also, the swings you built for us at the 245 house. That’s one of those small things that probably seemed simple to you, but to us it meant a lot. We spent lot of happy hours on those swings.</p>
+<p>Then there’s your “signature dish” — Spam with onions and dark sauce. Even though I’ve never tried that recipe from your cooking, somehow this combination has become a family classic. 😋</p>
+<div style="display: flex; justify-content: center;">
+    <iframe
+      width="700"
+      height="395"
+      src="https://www.youtube.com/embed/knmTujEFaT4"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+<p>Another thing I admire about you is your passion for music 🎼🎹🎵🎶 🎚️ When you were serving as a keyboardist in church every weekend, you were super committed to it. You practised seriously and showed up faithfully. I could always see how much joy it brought you.</p>
+<p>At the same time, you are also someone who knows exactly what you like. Your favourite restaurants, your favourite dishes — once you decide they are the best in town, that’s it. And every time you bring us there, you introduce it with so much confidence and passion that it always makes us laugh.</p>
+<p>And when it comes to certain things, your focus can be… quite legendary. Like chasing a cat in the warehouse and ending up breaking your finger. Or the period of time when you were researching all those fake dead bird props to scare birds away from the warehouse. When you decide something needs to be done, you really go all in.</p>
+<div style="display: flex; justify-content: center;">
+<img src="Jie2.jpeg"  style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>When I think about all these little memories, they may seem small on their own. But together they form the picture of the Papa we grew up with. ❤️</p>
+<p>Someone steady.
+Someone dependable.
+Someone who quietly worked hard so the family could move forward.</p>
+<p>When we were young, we probably didn’t think about these things much. Life just felt normal. But now that I’m older, I realise how much of that “normal” was actually quietly shaped by you.</p>
+<p>So today, on your 70th birthday, I just want to say something simple:</p><p></p><strong>Thank you.</strong> </p><p>Thank you for the life you built for our family.
+Thank you for all the effort that we didn’t see when we were younger.
+Thank you for all the little moments that became some of our happiest memories. </p> 
+<p>Sometimes fathers don't say a lot. But their love shows up in the things they do.</p>
+<p>Looking back now, I realise that your love has been there all along — in all the quiet ways you took care of us.</p>
+<p>And Papa, I hope you know this: The things you did mattered. They shaped our lives more than you probably realise.</p>
+<div style="display: flex; justify-content: center;">
+<img src="Jie.jpeg" alt="Home sweet home" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>Happy 70th birthday, Papa. ❤️ </p>
+<p>I'm really grateful that you're my father. </p>
+
+<p><em>Love,<br/>Xiao Yen</em></p>
+    </div>
+  </div>
+
+
+  <!-- ===========================================================
+       CARD 3 — SON: ENG YAO
+  ============================================================ -->
+  <div class="card accent-teal">
+    <div class="card-number">3</div>
+    <div class="card-header">
+      <div class="card-avatar bg-teal">E</div>
+      <div>
+        <div class="card-name">Eng Yao</div>
+        <div class="card-relation">Son 👦</div>
+      </div>
+    </div>
+
+    <!--
+    <div class="card-photo">
+      <img src="eng-yao-photo.jpg" alt="Eng Yao" />
+    </div>
+    <p class="photo-caption">Caption here</p>
+    -->
+
+    <div class="card-body">
+<p>Happy 70th Birthday, Papa! 🎂</p>
+<p>Seventy years. That's a number worth celebrating — and I, your son of 38 years, feel honoured to have experienced life with you for most of it.</p>
+<p>If I had to describe you in one line, it would be this: a man who never worried a day in his life, yet somehow dependable and responsible. Carefree on the outside, quietly dependable on the inside. That, Papa, is a superpower.</p>
+<p>🏠 <strong>The Ceiling Incident (A Trauma Report)</strong><br/>
+It all started when I was four years old. You, in your infinite wisdom, decided that throwing your children toward the ceiling was a perfectly reasonable form of entertainment. First up: Xiao Ting — who, to her credit, laughed and asked for more. Encouraged by this response, you then launched me skyward.</br>
+I screamed. I cried. You laughed.</br>
+Papa, I want you to know that I have recovered. Mostly. But it does explain why I am the Kiasi boy from young. You made me who I am.</p>
+<div style="display: flex; justify-content: center;">
+<img src="EY-young.jpg" style="max-width: 60%; height: auto; border-radius: 10px;">
+</div>
+<p>🚗 <strong>The World's Most Dedicated Driver</strong><br/>
+For years, you were our personal driver — ferrying us to tuition, to the swimming pool on weekends (which I genuinely loved, by the way), and to Johor Bahru for shopping. You never complained about a single kilometre.</p>
+<p>But my absolute favourite driving memory? The day you came to pick me up from my old primary school… when I was already in secondary school. Mum and I laughed until our sides hurt. You, of course, remained calm and laughed as well— which somehow made it even funnier. Classic Papa.</p>
+<p>🥦 <strong>The Vegetable Negotiations</strong><br/>
+You made us eat our vegetables, even when you clearly had to force yourself to eat them too — just to lead by example. The look on your face said "I do not want this" but your actions said "I am your father and we are doing this together." That, Papa, is love.</p>
+<p>🎸 <strong>The Things Only You Can Do</strong><br/>
+Mum is, without question, a supermom. But there are things that belong only to you. The way you picked up the keyboard in your 40s, just because you wanted to. The guitar. The harmonica. I am secretly proud being your son on those days that you perform keyboard in front of whole the church.</p>
+<div style="display: flex; justify-content: center;">
+<img src="Keyboard.jpeg" style="max-width: 70%; height: auto; border-radius: 10px;">
+</div>
+<p>🧘 <strong>The Art of Surviving Mum</strong><br/>
+I have never once seen you lose your cool under fire. When Mum is in full force, you have a gift — a well-timed compliment, a little distraction, maybe something happens in front — and just like that, the storm passes and you're somehow smiling again. Papa, that is not just patience. That is a mastery that I am still studying.</p>
+<p>👨‍👧‍👧 <strong>Now That I'm a Father Too</strong><br/>
+Since becoming a father of two daughters, I have begun to truly understand the weight of what you carried all those years. The exhaustion of keeping kids occupied on weekends. The loss of any personal space or quiet. The midnight disruptions, the doctor visits, the relentless giving of yourself — day after day, year after year, for twenty years.</p>
+<div style="display: flex; justify-content: center;">
+<img src="EY-Photo2.jpeg" style="max-width: 60%; height: auto; border-radius: 10px;">
+</div>
+<p>You never complained. Not once.</p>
+<p>You were not the kind of dad who measured love in achievements or report cards. You were the kind who simply showed up, again and again, loving us for exactly who we are. That kind of love is rare, Papa. And I do not take it for granted.</p>
+<p>For all of it — the ceiling throws, the vegetable standoffs, the years behind the wheel, the music, the laughter, the steadiness — thank you. I give thanks to the Lord for the specific gift of having you as my Papa.</p>
+<p>We may be separated by the Causeway, and yes, crossing with two young kids is basically a challenge. But I promise to keep making the trip and you and Mum are always welcome to visit us in Singapore anytime — because your granddaughters deserve to grow up knowing you, and because there are more memories still to be made. More weekend trips. More laughter. More of your cooking critiques on my dishes. More life, beyond the YouTube doomscrolling.</p>
+<p>Here's to 70 years of you, Papa. And many, many more. 🥂</p>
+<div style="display: flex; justify-content: center;">
+<img src="EY-Photo1.jpeg" style="max-width: 60%; height: auto; border-radius: 10px;">
+</div>
+<p><em>With all my love,<br/>Eng Yao</em></p>
+    </div>
+  </div>
+
+
+
+
+
+  <!-- ===========================================================
+       CARD 4 — DAUGHTER-IN-LAW: CHEE LING
+  ============================================================ -->
+  <div class="card accent-violet">
+    <div class="card-number">4</div>
+    <div class="card-header">
+      <div class="card-avatar bg-violet">C</div>
+      <div>
+        <div class="card-name">Chee Ling</div>
+        <div class="card-relation">Daughter-in-Law 💐</div>
+      </div>
+    </div>
+
+    <!--
+    <div class="card-photo">
+      <img src="chee-ling-photo.jpg" alt="Chee Ling" />
+    </div>
+    <p class="photo-caption">Caption here</p>
+    -->
+
+    <div class="card-body">
+<p>Dear Father,</p>
+<p>Blessed 70th birthday!! Thank you for being so patient and kind towards the children and us and for making us feel right at home all the time! Thank you for driving us around and showing us what it means to serve in church even in our golden years.  </p>
+<p>I pray that the Lord will continue to bless Mother and you with many good, healthy and long years ahead and may He grant you the desires of your heart!</p>
+<div style="display: flex; justify-content: center;">
+<img src="Family1.jpg" style="max-width: 60%; height: auto; border-radius: 10px;">
+</div>
+<p><em>P/S: Please share more of your tech knowledge with Eng Yao so that he can be “converted” to an Apple user (like the rest of us)! </em></p>
+<p><em>With love and gratitude,<br/>Chee Ling</em></p>
+    </div>
+  </div>
+
+
+  <!-- ===========================================================
+       CARD 5 — GRANDDAUGHTER: ESTHER
+  ============================================================ -->
+  <div class="card accent-pink">
+    <div class="card-number">5</div>
+    <div class="card-header">
+      <div class="card-avatar bg-pink">Es</div>
+      <div>
+        <div class="card-name">Esther</div>
+        <div class="card-relation">Granddaughter 🌸</div>
+      </div>
+    </div>
+
+    <!--
+    <div class="card-photo">
+      <img src="esther-photo.jpg" alt="Esther" />
+    </div>
+    <p class="photo-caption">Caption here</p>
+    -->
+
+    <div class="card-body">
+<p>🎂 Happy Birthday 爷爷!</p>
+<p>爷爷, today is your birthday! Papa say I must say something nice so I will say something nice first.</p>
+<p>I love you 爷爷. You are very old now. Daddy say 70 is a very very big number. I don't know what is 70 but it sounds like A LOT.</p>
+<p>爷爷, I have something to tell you. When I talk to you, you say "Oh" and "is it?" but your eyes never look at me. You are always looking at your phone! 爷爷, I am MORE interesting than your phone. I have MANY things to tell you. Very important things. Like how my friend at school did a funny thing and also about my new shoes and also there is a story about a butterfly — 爷爷 are you listening?? 爷爷!!</p>
+<div style="display: flex; justify-content: center;">
+<img src="Esther1.jpg" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>Also 爷爷, I need to talk about your carpet. </p>
+<p>爷爷, your carpet is not nice. I don't like it. It is furry and it sticks to my feet and I think you should change it. 爷爷 please change the carpet. I will help you choose. I know a very nice one. It is pink.</p>
+<p>Okay 爷爷, I say the nice things now. I like that when I go to your house and there are new toys. I like your house (but not the carpet). I like your piano very very much. Can you please teach me how to play the piano? I like that you come all the way to Singapore to see me even though it is very far.</p>
+<p>爷爷, I hope your birthday is very happy. Please put down your phone. Please change the carpet.</p>
+<div style="display: flex; justify-content: center;">
+<img src="Keyboard.jpg" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>I love you! 🩷</p>
+    </div>
+  </div>
+
+
+  <!-- ===========================================================
+       CARD 6 — GRANDDAUGHTER: LYDIA (MEI MEI)
+  ============================================================ -->
+  <div class="card accent-gold">
+    <div class="card-number">6</div>
+    <div class="card-header">
+      <div class="card-avatar bg-gold">L</div>
+      <div>
+        <div class="card-name">Lydia</div>
+        <div class="card-relation">Granddaughter 🍪</div>
+      </div>
+    </div>
+
+    <!--
+    <div class="card-photo">
+      <img src="lydia-photo.jpg" alt="Lydia" />
+    </div>
+    <p class="photo-caption">Caption here</p>
+    -->
+
+    <div class="card-body">
+<p>爷爷, HAPPY BIRTHDAY!! 🎉</p>
+<p>I love you 爷爷. </p>
+<p>Also I love your coffee table.</p>
+<p>爷爷, your coffee table is the BEST coffee table in the whole world. Every time I come to your house, I go and see what is on the coffee table first. Sorry 爷爷, but the snacks cannot wait. You will always be there. The snacks — I am not so sure.</p>
+<p>Last time I come, there is the biscuit with the cream inside — SO GOOD. And the little cracker thing. 爷爷, I don't know who buys these snacks but please tell them: good job. Please continue.</p>
+<p>Also 爷爷, Malaysia food is very very nice. I eat until my cheeks so full, Daddy say my cheeks is very round already. I think it is a compliment.</p>
+<div style="display: flex; justify-content: center;">
+<img src="Lydia2.jpg" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>爷爷, I have a birthday wish for you. My wish is that every time we visit, the coffee table is always full. And maybe can add some new ones for me to try? I am very easy-going. I will eat anything. Please bring me to eat all the sedap nasi lemak, fried kway teow and carrot cake! I love to eat, just like you! </p>
+<p>I also wish that you are happy and healthy so you can keep bringing me to eat good food in Malaysia. This is very important. If 爷爷 is healthy, 爷爷 can bring Mei Mei to eat. You see, I am thinking of both of us. 爷爷 should be very touched.</p>
+<p>Okay 爷爷, I go eat now. </p>
+<p>Happy Birthday!! I love you almost as much as I love your coffee table snacks. Almost. 🍪🍜❤️</p>
+<div style="display: flex; justify-content: center;">
+<img src="Lydia.jpeg" style="max-width: 70%; height: auto; border-radius: 10px;">
+</div>
+<p><em>— Mei Mei<br/>(Please make sure the coffee table is stocked before our next visit. Thank you.)</em></p>
+    </div>
+  </div>
+
+
+  <!-- ── OPTIONAL PHOTO GALLERY ─────────────────────────────────
+       Uncomment this block and replace filenames to show a grid
+       of family photos between messages.
+  ─────────────────────────────────────────────────────────────── -->
+  <!--
+  <ul class="photo-gallery">
+    <li><img src="family1.jpg" alt="Family photo 1" /></li>
+    <li><img src="family2.jpg" alt="Family photo 2" /></li>
+    <li><img src="family3.jpg" alt="Family photo 3" /></li>
+    <li><img src="family4.jpg" alt="Family photo 4" /></li>
+  </ul>
+  -->
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-icon">🎊</div>
+    <div class="divider-line"></div>
+  </div>
+
+
+  <!-- ===========================================================
+       CARD 7 — YOUNGER DAUGHTER: XIAO TING
+  ============================================================ -->
+  <div class="card accent-coral">
+    <div class="card-number">7</div>
+    <div class="card-header">
+      <div class="card-avatar bg-coral">XT</div>
+      <div>
+        <div class="card-name">Xiao Ting</div>
+        <div class="card-relation">Younger Daughter 🥋</div>
+      </div>
+    </div>
+
+    <!--
+    <div class="card-photo">
+      <img src="xiao-ting-photo.jpg" alt="Xiao Ting" />
+    </div>
+    <p class="photo-caption">Caption here</p>
+    -->
+
+    <div class="card-body">
+<p>Happy Birthday Papa,</p>
+<p>Happy 70th — what an incredible milestone. Thank you for the steady love, wisdom, and laughter you’ve given us. You’re truly one of a kind.</p>
+<p>I still smile thinking about how you encouraged us to eat vegetables, even though they weren’t your favourite. You never pushed too hard, but somehow it worked. You taught me to be open-minded, and that’s stayed with me.</p>
+<p>And all your gadgets — the cameras, recorders, computers — they became my little treasure trove. I had so much fun exploring them, especially the DSLR (which I used until it broke — and yes, I still keep it). Mum might have her thoughts, but I’m just grateful. 😄💕</p>
+<div style="display: flex; justify-content: center;">
+<img src="Daphne2.jpg" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+<p>Thank you too for having us learn Mandarin. It opened up a whole new world for me — from everyday life to searching for things (and maybe too many Taobao packages 📦). It’s a gift I truly appreciate now.</p>
+<p>And your love for martial arts? It lit a spark in me I didn't even know was there. Watching your passion made me curious, and that curiosity eventually led me to Japanese martial arts — something I now treasure deeply. That fire started with you. 🥋🧡</p>
+<div style="display: flex; justify-content: center;">
+<img src="Leg split.png" alt="Leg split" style="max-width: 80%; height: auto; border-radius: 10px;">
+</div>
+<p>Most of all, thank you for always looking out for my future and believing in me. It means more than I can say, and I’ll keep doing my best to make you proud.</p>
+<p>Thank you for being our Papa — in all the big and small ways you show your love.</p>
+<p>Happy 70th Birthday. Stay healthy, stay curious, and know you are deeply loved. 🎂🎉</p>
+<div style="display: flex; justify-content: center;">
+<img src="Daphne1.jpg" style="max-width: 50%; height: auto; border-radius: 10px;">
+</div>
+</div>
+  </div>
+
+
+  <!-- ===========================================================
+       CARD 8 — SON-IN-LAW: DESMOND
+  ============================================================ -->
+  <div class="card accent-teal">
+    <div class="card-number">8</div>
+    <div class="card-header">
+      <div class="card-avatar bg-teal">D</div>
+      <div>
+        <div class="card-name">Desmond</div>
+        <div class="card-relation">Your Most Favourite Son-in-Law 😄</div>
+      </div>
+    </div>
+
+    <!--
+    <div class="card-photo">
+      <img src="desmond-photo.jpg" alt="Desmond" />
+    </div>
+    <p class="photo-caption">Caption here</p>
+    -->
+
+    <div class="card-body">
+<p>Happy birthday Papa! May you have many more birthdays to come filled with joy and surrounded by love. 🎉</p>
+<div style="display: flex; justify-content: center;">
+<img src="Family2.jpg" style="max-width: 60%; height: auto; border-radius: 10px;">
+</div>
+    </div>
+  </div>
+
+
+  <!-- ── FINAL VIDEO SLOT ────────────────────────────────────────
+       Add a closing video (e.g. slideshow, song dedication, etc.)
+       To remove: delete this entire .video-slot block.
+  ─────────────────────────────────────────────────────────────── -->
+ <div style="display: flex; justify-content: center;">
+    <iframe
+      width="800"
+      height="450"
+      src="https://www.youtube.com/embed/6hmXrRDyzw8"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <p class="video-caption">🎬 After you read all the birthday message. Enjoy the video with sound on. Happy Birthday, Papa! </p>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <div class="footer">
+    <div class="footer-number">70</div>
+    <p class="footer-text">Here's to many more joyful years ahead ✨</p>
+    <div class="footer-hearts">❤️ 🧡 💛 💚 💙 💜</div>
+  </div>
+
+</div><!-- end .page-wrapper -->
+
+
+<!-- ============================================================
+     CONFETTI SCRIPT
+============================================================ -->
+<script>
+(function() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  const colors = ['#F5A623','#FF6B6B','#2EC4B6','#9B5DE5','#F15BB5','#FFFFFF','#FFE066','#4ECDC4'];
+  let pieces = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  for (let i = 0; i < 120; i++) {
+    pieces.push({
+      x: rand(0, window.innerWidth),
+      y: rand(-window.innerHeight, 0),
+      w: rand(6, 14),
+      h: rand(4, 10),
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: rand(0, Math.PI * 2),
+      rotSpeed: rand(-0.04, 0.04),
+      vx: rand(-1, 1),
+      vy: rand(1.2, 3.5),
+      opacity: rand(0.6, 1),
+      shape: Math.random() > 0.5 ? 'rect' : 'circle'
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      if (p.shape === 'rect') {
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.rot += p.rotSpeed;
+
+      if (p.y > H + 20) {
+        p.y = -20;
+        p.x = rand(0, W);
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+</body>
+</html>
